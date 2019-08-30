@@ -15,7 +15,7 @@ export type Method =
   | 'PATCH'
 
 export interface AxiosRequestConfig {
-  url: string
+  url?: string  // axios作为对象使用，axios.get()时url变为可选
   method?: Method
   data?: any
   params?: any
@@ -45,4 +45,24 @@ export interface AxiosError extends Error {
   request?: any   // XHLHttpRequest对象实例
   response?: AxiosResponse
   isAxiosError: boolean
+}
+
+
+// 该接口描述 Axios 类中的公共方法
+export interface Axios {
+  request(config: AxiosRequestConfig): AxiosPromise
+
+  get(url: string, config?: AxiosRequestConfig): AxiosPromise
+  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
+  head(url: string, config?: AxiosRequestConfig): AxiosPromise
+  options(url: string, config?: AxiosRequestConfig): AxiosPromise
+
+  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+}
+
+// 混合类型接口，本身是一个函数，同时继承Axios中的方法（可以看成是一个对象，可以同时做为函数和对象使用？）
+export interface AxiosInstance extends Axios {
+  (config:AxiosRequestConfig):AxiosPromise
 }

@@ -1,40 +1,17 @@
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
-import xhr from './xhr'
-import { buildURL } from './helpers/url'
-import { processHeaders } from './helpers/header'
-import { transformRequest, transformResponse } from './helpers/data'
+import { AxiosInstance } from "./types";
+import Axios from "./core/Axios";
+import { extend } from "./helpers/util";
 
+// 工厂函数，返回一个混合类型的实例
+function createInstance(): AxiosInstance {
+  const context = new Axios();
+  const instance = Axios.prototype.request.bind(context)  // 该实例本身是一个request函数， request貌似没有涉及this，为啥要绑定context？可不可以直接写成 instance=context.request ?
 
-function axios(config: AxiosRequestConfig): AxiosPromise {
-  processConfig(config)
-  return xhr(config).then(res => {
-    return transformResponseData(res)
-  })
+  extend(instance, context)  // 同时也是一个对象，把context上的原型属性及实例属性复制到自己身上
+
+  return instance as AxiosInstance
 }
 
-function processConfig(config: AxiosRequestConfig): void {
-  config.url = transformURL(config)
-  config.headers = transformHeaders(config)
-  config.data = transformRequestData(config)
-}
-
-function transformURL(config: AxiosRequestConfig): string {
-  const { url, params } = config
-  return buildURL(url, params)
-}
-
-function transformHeaders(config: AxiosRequestConfig) {
-  const { headers = {}, data } = config
-  return processHeaders(headers, data)
-}
-
-function transformRequestData(config: AxiosRequestConfig): any {
-  return transformRequest(config.data)
-}
-
-function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResponse(res.data)
-  return res
-}
+const axios = createInstance()
 
 export default axios
