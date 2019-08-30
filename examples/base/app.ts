@@ -1,5 +1,9 @@
 import axios from '../../src/index'
 
+// *
+// 处理params
+// *
+
 // axios({
 // 	method: 'get',
 // 	url: '/base/get',
@@ -63,6 +67,9 @@ import axios from '../../src/index'
 
 
 
+// *
+// 处理data,将普通对象改成json字符串
+// *
 
 // axios({
 // 	method: 'post',
@@ -74,7 +81,6 @@ import axios from '../../src/index'
 // })
 
 // const arr = new Int32Array([21,31])
-
 // axios({
 // 	method: 'post',
 // 	url: '/base/buffer',
@@ -83,7 +89,9 @@ import axios from '../../src/index'
 
 
 
-
+// *
+// 处理req headers,为普通对象添加content-type
+// *
 
 // axios({
 // 	method: 'post',
@@ -106,6 +114,7 @@ import axios from '../../src/index'
 // 	}
 // })
 
+// 浏览器发现data是特殊对象，会自动为request headers的content-type设置对应的值 
 // const paramsString = 'q=URLUtils.searchParams&topic=api'
 // const searchParams = new URLSearchParams(paramsString)
 
@@ -117,7 +126,7 @@ import axios from '../../src/index'
 
 
 
-
+// 把res改成promise，req可以传入responseType
 axios({
 	method: 'post',
 	url: '/base/post',
@@ -132,7 +141,7 @@ axios({
 axios({
 	method: 'post',
 	url: '/base/post',
-	responseType: 'json',
+	responseType: 'json',   // 浏览器会自动吧json字符串解析为 普通对象
 	data: {
 		a: 3,
 		b: 4

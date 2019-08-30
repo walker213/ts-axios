@@ -1,5 +1,6 @@
 import { isObject } from './util'
 
+// 处理headers大小写
 function normalizeHeaderName(headers: any, normalizedName: string): void {
   if (!headers) {
     return
@@ -14,7 +15,7 @@ function normalizeHeaderName(headers: any, normalizedName: string): void {
 
 export function processHeaders(headers: any, data: any): any {
   normalizeHeaderName(headers, 'Content-Type')
-
+  // 为普通对象添加content-type
   if (isObject(data)) {
     if (headers && !headers['Content-Type']) {
       headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -29,7 +30,7 @@ export function parseHeaders(headers: string): any {
   if (!headers) {
     return parsed
   }
-
+  // 根据回车和换行转成数组
   headers.split('\r\n').forEach(line => {
     let [key, val] = line.split(':')
     key = key.trim().toLowerCase()

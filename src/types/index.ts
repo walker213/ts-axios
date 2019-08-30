@@ -24,6 +24,7 @@ export interface AxiosRequestConfig {
   timeout?: number
 }
 
+// 期望最后拿到的response格式
 export interface AxiosResponse {
   data: any
   status: number
@@ -34,13 +35,14 @@ export interface AxiosResponse {
 }
 
 export interface AxiosPromise extends Promise<AxiosResponse> {
-  // Promise泛型接口
+  // Promise泛型接口，resolve的值应是AxiosResponse
 }
 
+// 导出接口给 axios catch到的e使用
 export interface AxiosError extends Error {
   config: AxiosRequestConfig
-  code?: string
-  request?: any
+  code?: string | null    // 错误代码
+  request?: any   // XHLHttpRequest对象实例
   response?: AxiosResponse
   isAxiosError: boolean
 }
