@@ -25,8 +25,8 @@ export interface AxiosRequestConfig {
 }
 
 // 期望最后拿到的response格式
-export interface AxiosResponse {
-  data: any
+export interface AxiosResponse<T=any> {
+  data: T
   status: number
   statusText: string
   headers: any
@@ -34,7 +34,7 @@ export interface AxiosResponse {
   request: any
 }
 
-export interface AxiosPromise extends Promise<AxiosResponse> {
+export interface AxiosPromise<T=any> extends Promise<AxiosResponse<T>> {
   // Promise泛型接口，resolve的值应是AxiosResponse
 }
 
@@ -50,20 +50,20 @@ export interface AxiosError extends Error {
 
 // 该接口描述 Axios 类中的公共方法
 export interface Axios {
-  request(config: AxiosRequestConfig): AxiosPromise  // 不必改写为支持函数重载的形式，函数具体实现是兼容这种形式的就行
+  request<T=any>(config: AxiosRequestConfig): AxiosPromise<T>  // 不必改写为支持函数重载的形式，函数具体实现是兼容这种形式的就行
 
-  get(url: string, config?: AxiosRequestConfig): AxiosPromise
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
-  head(url: string, config?: AxiosRequestConfig): AxiosPromise
-  options(url: string, config?: AxiosRequestConfig): AxiosPromise
+  get<T=any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  delete<T=any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  head<T=any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  options<T=any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 
-  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  post<T=any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  put<T=any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  patch<T=any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
 // 混合类型接口，本身是一个函数，同时继承Axios中的方法（可以看成是一个对象，可以同时做为函数和对象使用？）
 export interface AxiosInstance extends Axios {
-  (config: AxiosRequestConfig): AxiosPromise
-  (url:string,config?:AxiosRequestConfig):AxiosPromise // 函数重载
+  <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  <T = any>(url:string,config?:AxiosRequestConfig):AxiosPromise<T> // 函数重载
 }
