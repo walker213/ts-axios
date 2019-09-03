@@ -115,3 +115,9 @@ function  registerExtendRouter() {
     res.json(req.body)
   })
 }
+
+function registerInterceptorRouter() {
+  router.get('/interceptor/get', function(req, res) {
+    res.end('hello')
+  })
+}
