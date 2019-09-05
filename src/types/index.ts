@@ -23,6 +23,9 @@ export interface AxiosRequestConfig {
   responseType?: XMLHttpRequestResponseType
   timeout?: number
 
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+
   [propName:string]:any  //字符串索引签名
 }
 
@@ -91,4 +94,9 @@ export interface ResolvedFn<T> {  // 这里T就两种 AxiosRequestConfig 以及 
 
 export interface RejectedFn {
   (error: any): any
+}
+
+
+export interface AxiosTransformer{
+  (data:any,headers?:any):any
 }
