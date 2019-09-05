@@ -22,6 +22,8 @@ export interface AxiosRequestConfig {
   headers?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+
+  [propName:string]:any  //字符串索引签名
 }
 
 // 期望最后拿到的response格式
@@ -50,6 +52,7 @@ export interface AxiosError extends Error {
 
 // 该接口描述 Axios 类中的公共方法
 export interface Axios {
+  defaults: AxiosRequestConfig
   // 添加interceptors定义
   interceptors: {
     request:AxiosInterceptorManager<AxiosRequestConfig>

@@ -1,10 +1,11 @@
-import { AxiosInstance } from "./types";
+import { AxiosInstance,AxiosRequestConfig } from "./types";
 import Axios from "./core/Axios";
 import { extend } from "./helpers/util";
+import defaults from './defaults';
 
 // 工厂函数，返回一个混合类型的实例
-function createInstance(): AxiosInstance {
-  const context = new Axios();
+function createInstance(config: AxiosRequestConfig): AxiosInstance {
+  const context = new Axios(config);
   const instance = Axios.prototype.request.bind(context)  // 该实例本身是一个request函数， request貌似没有涉及this，为啥要绑定context？可不可以直接写成 instance=context.request ?
 
   extend(instance, context)  // 同时也是一个对象，把context上的原型属性及实例属性复制到自己身上
@@ -12,6 +13,6 @@ function createInstance(): AxiosInstance {
   return instance as AxiosInstance
 }
 
-const axios = createInstance()
+const axios = createInstance(defaults)
 
 export default axios

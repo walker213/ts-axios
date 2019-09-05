@@ -1,4 +1,6 @@
 import { isObject } from './util'
+import { Method } from "../types";
+import { deepMerge } from "./util";
 
 // 处理headers大小写
 function normalizeHeaderName(headers: any, normalizedName: string): void {
@@ -44,4 +46,21 @@ export function parseHeaders(headers: string): any {
   })
 
   return parsed
+}
+
+
+export function flattenHeaders(headers: any, method: Method): any{
+  if (!headers) {
+    return headers
+  }
+
+  headers = deepMerge(headers.common, headers[method],headers)  // 把headers.common,headers[method]中的属性深拷贝到headers第一层
+
+  const methodsToDelete = ['delete','get','head','options','post','put','patch','common']
+  
+  methodsToDelete.forEach(method => {
+    delete headers[method]
+  })
+
+  return headers
 }

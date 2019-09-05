@@ -1,6 +1,7 @@
 import { AxiosRequestConfig, AxiosPromise, Method, AxiosResponse, ResolvedFn, RejectedFn } from "../types";
 import dispatchRequest from './dispatchRequest';
 import InterceptorManager from "./InterceptorManager";
+import mergeConfig from "./mergeConfig";
 
 
 interface Interceptors {
@@ -9,31 +10,35 @@ interface Interceptors {
 }
 
 interface PromiseChain<T> {
-	resolved: ResolvedFn<T> | ((config: AxiosRequestConfig)=>AxiosPromise)
+	resolved: ResolvedFn<T> | ((config: AxiosRequestConfig) => AxiosPromise)
 	rejected?: RejectedFn
 }
 
 export default class Axios {
+	defaults: AxiosRequestConfig
 	interceptors: Interceptors    // axios的一个属性，值是一个obj
 
-	constructor() {
+	constructor(initConfig: AxiosRequestConfig) {
+		this.defaults = initConfig
 		this.interceptors = {
 			request: new InterceptorManager<AxiosRequestConfig>(),
 			response: new InterceptorManager<AxiosResponse>()
 		}
 	}
-	
-	request(url:any,config?:any): AxiosPromise {
+
+	request(url: any, config?: any): AxiosPromise {
 		if (typeof url === 'string') {
 			if (!config) config = {};
-			config.url=url
+			config.url = url
 		} else {
 			config = url
 		}
 
+		config = mergeConfig(this.defaults, config)
+
 		const chain: PromiseChain<any>[] = [   // <any> 可以改成 <AxiosRequestConfig | AxiosResponse> 吗？
 			// 初始值
-			{ 
+			{
 				resolved: dispatchRequest,  // resolved状态的值经过请求后从 AxiosRequestConfig => AxiosResponse
 				rejected: undefined
 			}
@@ -45,17 +50,17 @@ export default class Axios {
 
 		this.interceptors.response.forEach(interceptor => {  // 把response对象中的interceptor push到chain中
 			chain.push(interceptor)
-		}) 
+		})
 
 		let promise = Promise.resolve(config)
-		
+
 		// 利用promise链式调用
 		while (chain.length) {
 			const { resolved, rejected } = chain.shift()!   // 拿出chain中的第一个interceptor  ，  为啥要断言不为空？
-			promise=promise.then(resolved,rejected)
+			promise = promise.then(resolved, rejected)
 		}
-		 
-		
+
+
 		return promise
 	}
 

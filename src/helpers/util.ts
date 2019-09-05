@@ -24,3 +24,27 @@ export function extend<T, U>(to: T, from: U): T & U {
   }
   return <T & U>to
 }
+
+
+export function deepMerge(...objs:any[]):any {
+  const result = Object.create(null)
+
+  objs.forEach(obj => {
+    if (obj) {
+      Object.keys(obj).forEach(key=>{
+        const val = obj[key]    // headers{key:val}
+        if (isPlainObject(val)) {
+          if (isPlainObject(result[key])) {  // result[key]可能已经存在了，因为objs传入了多个headers，所以先判断
+            result[key]=deepMerge(result[key],val)
+          } else {
+            result[key]=deepMerge(val)
+          }
+        } else {
+          result[key]=val
+        }
+      })
+    }
+  })
+
+  return result
+}
