@@ -80,6 +80,11 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> // 函数重载
 }
 
+// 增加一个create方法创建实例
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance 
+}
+
 
 // 拦截器管理器
 export interface AxiosInterceptorManager<T> {
