@@ -4,7 +4,7 @@ import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, url, method = 'get', headers, responseType, timeout } = config
+    const { data = null, url, method = 'get', headers, responseType, timeout, cancelToken } = config
 
     // 处理非200状态码的错误
     function handleResponse(response: AxiosResponse) {
@@ -77,6 +77,15 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         request.setRequestHeader(name, headers[name])
       }
     })
+    
+    // request是异步的，数据返回前都可以通过request.abort()中止，插入一个pendding状态的promise对象，使得外部可以通过调用一个可以改变该promise的状态的函数，
+    // 从而调用request.abort()中止请求
+    if (cancelToken) {
+      cancelToken.promise.then(reason => {
+        request.abort()
+        reject(reason)  // reason是Cancel实例，可以用来判断是不是因为中止请求产生的错误
+      })
+    }
 
     request.send(data)
   })

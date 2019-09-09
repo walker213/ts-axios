@@ -26,7 +26,9 @@ export interface AxiosRequestConfig {
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   transformResponse?: AxiosTransformer | AxiosTransformer[]
 
-  [propName:string]:any  //字符串索引签名
+  cancelToken?: CancelToken
+
+  [propName: string]: any  //字符串索引签名
 }
 
 // 期望最后拿到的response格式
@@ -58,10 +60,10 @@ export interface Axios {
   defaults: AxiosRequestConfig
   // 添加interceptors定义
   interceptors: {
-    request:AxiosInterceptorManager<AxiosRequestConfig>
-    response:AxiosInterceptorManager<AxiosResponse>
+    request: AxiosInterceptorManager<AxiosRequestConfig>
+    response: AxiosInterceptorManager<AxiosResponse>
   }
-  
+
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>  // 不必改写为支持函数重载的形式，函数具体实现是兼容这种形式的就行
 
   get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
@@ -80,9 +82,13 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> // 函数重载
 }
 
-// 增加一个create方法创建实例
+// 为axios实例扩展静态方法
 export interface AxiosStatic extends AxiosInstance {
-  create(config?: AxiosRequestConfig): AxiosInstance 
+  create(config?: AxiosRequestConfig): AxiosInstance
+  
+  CancelToken:CancelTokenStatic
+  Cancel:CancelStatic
+  isCancel:(value:any)=>boolean
 }
 
 
@@ -102,6 +108,42 @@ export interface RejectedFn {
 }
 
 
-export interface AxiosTransformer{
-  (data:any,headers?:any):any
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
+}
+
+
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel  // promise resolve的值
+
+  throwIfRequested():void
+}
+
+//取消函数
+export interface Canceler {
+  (message?: string): void
+}
+
+export interface CancelExecutor {
+  (cancle: Canceler): void
+}
+
+export interface CancelTokenSource{
+  cancelToken: CancelToken
+  cancel: Canceler
+}
+
+// 类类型
+export interface CancelTokenStatic{
+  new(executor: CancelExecutor): CancelToken
+  source(): CancelTokenSource
+}
+
+export interface Cancel{
+  message?:string
+}
+
+export interface CancelStatic{
+  new(message?:string):Cancel
 }

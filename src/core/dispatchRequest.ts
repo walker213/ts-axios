@@ -6,6 +6,7 @@ import transform from './transform'
 
 
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+	throwIfcancellationRequested(config)
 	processConfig(config)
 	return xhr(config).then(res => {
 		return transformResponseData(res)
@@ -26,4 +27,11 @@ function transformURL(config: AxiosRequestConfig): string {
 function transformResponseData(res: AxiosResponse): AxiosResponse {
 	res.data = transform(res.data,res.headers,res.config.transformResponse)
 	return res
+}
+
+// 检测config.cancelToken，是否已经使用过一次取消，若已取消过，直接报错，不发送请求
+function throwIfcancellationRequested(config:AxiosRequestConfig):void {
+	if (config.cancelToken) {
+		config.cancelToken.throwIfRequested()
+	}
 }

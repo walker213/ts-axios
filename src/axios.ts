@@ -3,6 +3,8 @@ import Axios from "./core/Axios";
 import { extend } from "./helpers/util";
 import defaults from './defaults';
 import mergeConfig from './core/mergeConfig';
+import CancelToken from './cancel/CancelToken'
+import Cancel,{ isCancel } from "./cancel/Cancel";
 
 // 工厂函数，返回一个混合类型的实例
 function createInstance(config: AxiosRequestConfig): AxiosStatic {
@@ -16,9 +18,13 @@ function createInstance(config: AxiosRequestConfig): AxiosStatic {
 
 const axios = createInstance(defaults)
 
-// 合并config
+// 为axios实例增加一个create方法，可以传入新的defaut config与原来的合并
 axios.create = function create(config) {
   return createInstance(mergeConfig(defaults,config))
 }
+
+axios.CancelToken = CancelToken
+axios.Cancel = Cancel
+axios.isCancel = isCancel
 
 export default axios
