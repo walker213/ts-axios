@@ -18,7 +18,11 @@ app.use(webpackDevMiddleware(compiler, {
 
 app.use(webpackHotMiddleware(compiler))
 
-app.use(express.static(__dirname))
+app.use(express.static(__dirname), {
+  setHeaders(res) {
+    res.cookie('XSRF-TOKEN-D','1234bc')  // 设置cookie
+  }
+})
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -30,6 +34,7 @@ registerBaseRouter()
 registerErrorRouter()
 registerExtendRouter()
 registerCancelRouter()
+registerMoreRouter()
 
 app.use(router)
 
@@ -139,5 +144,11 @@ function registerCancelRouter() {
     setTimeout(() => {
       res.json(req.body)
     }, 100);
+  })
+}
+
+function  registerMoreRouter() {
+  router.get('/more/get',function(req,res) {
+    res.json(req.cookies)
   })
 }

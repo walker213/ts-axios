@@ -11,6 +11,9 @@ const defaults: AxiosRequestConfig = {
 		}
 	},
 
+	xsrfCookieName: 'XSRF-TOKEN',
+	xsrfHeaderName: 'X-XSRF-TOKEN',
+
 	
 	// transformRequest 在将请求数据发送到服务器之前对其进行修改，只适用于 put 、post 、patch
 	// 如果值是数组，则数组中的最后一个函数必须返回一个字符串或者FormData、UrlSearchParams、Blob等类型作为xhr.send方法的参数
