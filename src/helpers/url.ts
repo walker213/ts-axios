@@ -27,7 +27,7 @@ export function buildURL(url: string, params?: any, paramsSerializer?: (params: 
     serializeParams = paramsSerializer(params)
   } else if (isURLSearchParams(params)) {  // 如果params是URLSearchParams 
     serializeParams = params.toString()
-   } else {
+  } else {
     const parts: string[] = []
 
     Object.keys(params).forEach(key => {
@@ -64,6 +64,17 @@ export function buildURL(url: string, params?: any, paramsSerializer?: (params: 
   }
 
   return url
+}
+
+
+// 判断url是不是绝对地址
+export function isAbsoluteURL(url: string): boolean {
+  return /(^[a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+}
+
+export function combineURL(baseURL: string, relativeURL?: string): string {
+  // 把 baseURL后面的 '/' 和 relativeURL前面的 '/' 统一去除
+  return relativeURL ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL
 }
 
 
