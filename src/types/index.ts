@@ -31,6 +31,9 @@ export interface AxiosRequestConfig {
   xsrfCookieName?: string
   xsrfHeaderName?: string
 
+  onDownloadProgress?: (e: ProgressEvent) => void
+  onUploadProgress?: (e: ProgressEvent) => void
+
   [propName: string]: any  //字符串索引签名
 }
 
@@ -88,10 +91,10 @@ export interface AxiosInstance extends Axios {
 // 为axios实例扩展静态方法
 export interface AxiosStatic extends AxiosInstance {
   create(config?: AxiosRequestConfig): AxiosInstance
-  
-  CancelToken:CancelTokenStatic
-  Cancel:CancelStatic
-  isCancel:(value:any)=>boolean
+
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
 }
 
 
@@ -120,7 +123,7 @@ export interface CancelToken {
   promise: Promise<Cancel>
   reason?: Cancel  // promise resolve的值
 
-  throwIfRequested():void
+  throwIfRequested(): void
 }
 
 //取消函数
@@ -132,21 +135,21 @@ export interface CancelExecutor {
   (cancle: Canceler): void
 }
 
-export interface CancelTokenSource{
+export interface CancelTokenSource {
   cancelToken: CancelToken
   cancel: Canceler
 }
 
 // 类类型
-export interface CancelTokenStatic{
+export interface CancelTokenStatic {
   new(executor: CancelExecutor): CancelToken
   source(): CancelTokenSource
 }
 
-export interface Cancel{
-  message?:string
+export interface Cancel {
+  message?: string
 }
 
-export interface CancelStatic{
-  new(message?:string):Cancel
+export interface CancelStatic {
+  new(message?: string): Cancel
 }

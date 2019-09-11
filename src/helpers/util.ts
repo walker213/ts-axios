@@ -16,6 +16,10 @@ export function isPlainObject(val: any): val is Object {
   return toString.call(val) === '[object Object]'
 }
 
+export function isFormData(val:any): val is FormData {
+  return typeof val !== undefined && val instanceof FormData
+}
+
 // 把from中的属性及方法拷贝到to中
 export function extend<T, U>(to: T, from: U): T & U {
   for (const key in from) {
