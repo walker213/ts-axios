@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const webpack = require('webpack')
+const atob = require('atob')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')

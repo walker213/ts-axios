@@ -11,13 +11,19 @@ export function isObject(val: any): val is Object {
 }
 
 
+// 判断普通对象
 export function isPlainObject(val: any): val is Object {
-  // 判断普通对象
   return toString.call(val) === '[object Object]'
 }
 
+// 判断请求data是不是FormData
 export function isFormData(val:any): val is FormData {
   return typeof val !== undefined && val instanceof FormData
+}
+
+// 判断params是不是URLSearchParams
+export function isURLSearchParams(val:any): val is URLSearchParams {
+  return typeof val !== undefined && val instanceof URLSearchParams
 }
 
 // 把from中的属性及方法拷贝到to中

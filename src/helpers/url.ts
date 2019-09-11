@@ -1,4 +1,4 @@
-import { isDate, isPlainObject } from './util'
+import { isDate, isPlainObject, isURLSearchParams } from './util'
 
 interface URLOrigin {
   protocol: string
@@ -16,41 +16,48 @@ function encode(val: string): string {
     .replace(/%5D/gi, ']')
 }
 
-export function buildURL(url: string, params?: any): string {
+export function buildURL(url: string, params?: any, paramsSerializer?: (params: any) => string): string {
   if (!params) {
     return url
   }
 
-  const parts: string[] = []
+  let serializeParams
 
-  Object.keys(params).forEach(key => {
-    const val = params[key]
-    if (val === null || typeof val === 'undefined') {
-      return
-    }
-    let values = []
-    if (Array.isArray(val)) {
-      values = val
-      key += '[]'
-    } else {
-      values = [val]
-    }
-    values.forEach(val => {
-      if (isDate(val)) {
-        val = val.toISOString()
-      } else if (isPlainObject(val)) {
-        val = JSON.stringify(val)
+  if (paramsSerializer) {   // 自定义parmas处理函数
+    serializeParams = paramsSerializer(params)
+  } else if (isURLSearchParams(params)) {  // 如果params是URLSearchParams 
+    serializeParams = params.toString()
+   } else {
+    const parts: string[] = []
+
+    Object.keys(params).forEach(key => {
+      const val = params[key]
+      if (val === null || typeof val === 'undefined') {
+        return
       }
-      parts.push(`${encode(key)}=${encode(val)}`)
+      let values = []
+      if (Array.isArray(val)) {
+        values = val
+        key += '[]'
+      } else {
+        values = [val]
+      }
+      values.forEach(val => {
+        if (isDate(val)) {
+          val = val.toISOString()
+        } else if (isPlainObject(val)) {
+          val = JSON.stringify(val)
+        }
+        parts.push(`${encode(key)}=${encode(val)}`)
+      })
     })
-  })
-
-  let serializeParams = parts.join('&')
+    serializeParams = parts.join('&')
+  }
 
   if (serializeParams) {
     const markIndex = url.indexOf('#')
+    // 检查原url有无哈希
     if (markIndex !== -1) {
-      // 检查原url有无哈希
       url = url.slice(0, markIndex)
     }
     url += (url.includes('?') ? '&' : '?') + serializeParams
@@ -71,7 +78,7 @@ const urlParsingNode = document.createElement('a')
 const currentOrigin = resolveURL(window.location.href) // 当前页面
 
 function resolveURL(url: string): URLOrigin {
-  urlParsingNode.setAttribute('href', url)  
+  urlParsingNode.setAttribute('href', url)
   const { protocol, host } = urlParsingNode  // 利用a标签解析protocol,host?
   return {
     protocol,

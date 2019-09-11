@@ -7,7 +7,7 @@ import { isFormData } from "../helpers/util";
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, url, method = 'get', headers, responseType, timeout, cancelToken, withCredentials, xsrfCookieName, xsrfHeaderName, onDownloadProgress, onUploadProgress } = config
+    const { data = null, url, method = 'get', headers, responseType, timeout, cancelToken, withCredentials, xsrfCookieName, xsrfHeaderName, onDownloadProgress, onUploadProgress, auth, validateStatus } = config
 
     // 与配置相关
     function configureRequest(): void {
@@ -22,6 +22,11 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       // 设置withCredentials后,跨域请求其它域 B，可以带上被请求的域 B 下的cookies
       if (withCredentials) {
         request.withCredentials = withCredentials
+      }
+
+      if (auth) {
+        // 查看 Authorization 文档
+        headers['Authorization'] = 'Basic' + btoa(auth.username + auth.password)
       }
     }
 
@@ -110,7 +115,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     // 处理非200状态码的错误
     function handleResponse(response: AxiosResponse) {
-      if (response.status >= 200 && response.status < 300) {
+      // 如果用户把validateStatus重置为空，则默认所有status都是正确响应
+      if (!validateStatus || validateStatus(response.status)) {
         resolve(response)
       } else {
         reject(
@@ -125,7 +131,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
     }
 
-    
+
     // 创建一个 xhr 流程
     const request = new XMLHttpRequest()
 
