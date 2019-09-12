@@ -36,7 +36,7 @@ export interface AxiosRequestConfig {
   auth?: AxiosBasicCredentials
   validateStatus?: (status: number) => boolean
   paramsSerializer?: (params: any) => string
-  baseURL?:string
+  baseURL?: string
 
   [propName: string]: any  //字符串索引签名
 }
@@ -84,12 +84,19 @@ export interface Axios {
   post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+
+  getUri(config?: AxiosRequestConfig): string
 }
 
 // 混合类型接口，本身是一个函数，同时继承Axios中的方法（可以看成是一个对象，可以同时做为函数和对象使用？）
 export interface AxiosInstance extends Axios {
   <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> // 函数重载
+}
+
+// 类类型
+export interface AxiosClassStatic {
+  new(config: AxiosRequestConfig): Axios
 }
 
 // 为axios实例扩展静态方法
@@ -99,6 +106,12 @@ export interface AxiosStatic extends AxiosInstance {
   CancelToken: CancelTokenStatic
   Cancel: CancelStatic
   isCancel: (value: any) => boolean
+  
+  // 鸡肋
+  all<T>(promises: Array<T | Promise<T>>): Promise<T[]>
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R
+
+  Axios: AxiosClassStatic
 }
 
 
