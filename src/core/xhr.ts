@@ -2,7 +2,7 @@ import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
 import { parseHeaders } from '../helpers/header'
 import { createError } from '../helpers/error'
 import { isURLSameOrigin } from "../helpers/url";
-import cookie from '../helpers/cookies';
+import cookie from '../helpers/cookie';
 import { isFormData } from "../helpers/util";
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
